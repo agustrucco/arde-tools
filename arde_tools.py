@@ -8,6 +8,8 @@ Uso desde terminal:
     python arde_tools.py add_month "SEP 26"   # crear nueva hoja de mes
     python arde_tools.py stock_report         # ver estado del stock por consola
     python arde_tools.py fix_desc_stock       # convertir TRUE/FALSE a SI/NO
+    python arde_tools.py reset_desc_stock     # forzar TODO DESC STOCK a NO (reset de stock)
+    python arde_tools.py fix_dropdowns        # regenerar dropdowns desde catálogo STOCK actual
     python arde_tools.py validate             # reportar entradas con posibles typos
     python arde_tools.py validate --fix       # reportar Y corregir automáticamente
 """
@@ -440,6 +442,64 @@ def fix_desc_stock_values(wb=None):
         _save(wb)
     print(f"  {changed} valores DESC STOCK convertidos a SI/NO.")
 
+# ── Función: reset_desc_stock ──────────────────────────────────────────────────
+
+def reset_desc_stock(wb=None):
+    """Fuerza TODOS los valores de DESC STOCK a 'NO' en todas las hojas mensuales.
+
+    Usar cuando se hace un reset de stock y se quiere partir de cero:
+    ninguna venta anterior descuenta del stock hasta que Sol las marque SI manualmente.
+    """
+    own = wb is None
+    if own:
+        wb = _load()
+
+    changed = 0
+    for name in _month_sheets(wb):
+        if name not in wb.sheetnames:
+            continue
+        ws = wb[name]
+        col_letter = DESC_STOCK_COL.get(name, "J")
+        col_idx = column_index_from_string(col_letter)
+        for row in ws.iter_rows(min_row=2, min_col=col_idx, max_col=col_idx):
+            cell = row[0]
+            if cell.value != "NO" and cell.value is not None and cell.value != "":
+                cell.value = "NO"
+                changed += 1
+            elif cell.value is True or cell.value is False:
+                cell.value = "NO"
+                changed += 1
+
+    if own:
+        _save(wb)
+    print(f"  {changed} celdas DESC STOCK forzadas a 'NO'. VENDIDOS quedará en 0.")
+
+# ── Función: fix_dropdowns ─────────────────────────────────────────────────────
+
+def fix_dropdowns(wb=None):
+    """Regenera los dropdowns de todas las hojas mensuales desde el catálogo STOCK actual.
+
+    Usar cuando se agregan productos nuevos a STOCK y no aparecen en los desplegables
+    de las planillas de ventas.
+    """
+    own = wb is None
+    if own:
+        wb = _load()
+
+    months = _month_sheets(wb)
+    for name in months:
+        if name not in wb.sheetnames:
+            continue
+        ws = wb[name]
+        # Limpiar validaciones existentes antes de agregar nuevas
+        ws.data_validations.dataValidation = []
+        add_dropdowns_to_sheet(ws)
+        print(f"  Dropdowns regenerados: {name}")
+
+    if own:
+        _save(wb)
+    print(f"  {len(months)} hojas actualizadas con catálogo STOCK vigente.")
+
 # ── Función: validate_entries ───────────────────────────────────────────────────
 
 def _stock_combos(wb):
@@ -531,12 +591,14 @@ def validate_entries(fix=False, wb=None):
 # ── CLI ────────────────────────────────────────────────────────────────────────
 
 COMMANDS = {
-    "styling":       (apply_styling,        "Aplicar colores a todas las hojas"),
-    "fix_formulas":  (fix_vendidos_formulas, "Regenerar fórmulas VENDIDOS en STOCK"),
-    "add_month":     (None,                  "Crear nueva hoja de mes (requiere nombre)"),
-    "stock_report":  (stock_report,          "Ver estado del stock por consola"),
-    "fix_desc_stock":(fix_desc_stock_values, "Convertir TRUE/FALSE a SI/NO en DESC STOCK"),
-    "validate":      (None,                   "Detectar (y opcional --fix) entradas con typos vs STOCK"),
+    "styling":          (apply_styling,        "Aplicar colores a todas las hojas"),
+    "fix_formulas":     (fix_vendidos_formulas, "Regenerar fórmulas VENDIDOS en STOCK"),
+    "add_month":        (None,                  "Crear nueva hoja de mes (requiere nombre)"),
+    "stock_report":     (stock_report,          "Ver estado del stock por consola"),
+    "fix_desc_stock":   (fix_desc_stock_values, "Convertir TRUE/FALSE a SI/NO en DESC STOCK"),
+    "reset_desc_stock": (reset_desc_stock,      "Forzar TODO DESC STOCK a NO (reset de stock)"),
+    "fix_dropdowns":    (fix_dropdowns,         "Regenerar dropdowns de ventas desde STOCK actual"),
+    "validate":         (None,                  "Detectar (y opcional --fix) entradas con typos vs STOCK"),
 }
 
 def main():
