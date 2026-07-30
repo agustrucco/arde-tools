@@ -49,9 +49,10 @@ STOCK_COLS = {
     "vendidos":     "F",
     "perdidos":     "G",
     "taller":       "H",
-    "stock_local":  "I",
-    "estado":       "J",
-    "precio_base":  "K",
+    "feria":        "I",
+    "stock_local":  "J",
+    "estado":       "K",
+    "precio_base":  "L",
 }
 
 # Columna DESC STOCK por hoja (verificado contra el archivo real)
@@ -178,7 +179,7 @@ def apply_styling(wb=None):
 
     # STOCK
     ws = wb["STOCK"]
-    ncols = _col("precio_base")
+    ncols = _col("precio_base")  # now col L = 12
     hr = _find_header_row(ws)
     _style_header(ws, hr, ncols)
     r, even = hr + 1, True
@@ -387,13 +388,14 @@ def stock_report(wb=None):
         inicial  = ws_stock.cell(r, _col("stock_inicial")).value
         perdidos = ws_stock.cell(r, _col("perdidos")).value or 0
         taller   = ws_stock.cell(r, _col("taller")).value or 0
+        feria    = ws_stock.cell(r, _col("feria")).value or 0
         label = f"{pieza} {modelo} {metal}"
 
         if not inicial:
             counts["Sin cargar"].append(label)
         else:
             vendidos   = sold.get((pieza, modelo, metal), 0)
-            stock_local = inicial - vendidos - perdidos - taller
+            stock_local = inicial - vendidos - perdidos - taller - feria
             if stock_local <= 0:
                 counts["SIN STOCK"].append(label)
             elif stock_local <= 3:
