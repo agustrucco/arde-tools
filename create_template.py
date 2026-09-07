@@ -1,6 +1,6 @@
 """
-Genera NUEVO ARDE AGUSTIN.xlsx con datos ficticios de ejemplo.
-Correr una vez para crear el template: python create_template.py
+Generate template.xlsx with sample fictional data.
+Run once to create the workbook: python create_template.py
 """
 
 from openpyxl import Workbook
@@ -63,17 +63,17 @@ ws.column_dimensions["B"].width = 12
 ws.column_dimensions["C"].width = 16
 ws.column_dimensions["J"].width = 18
 
-# ── ENERO 26 (hoja de ventas ejemplo) ─────────────────────────────────────────
+# ── ENERO 26 (sample sales sheet) ─────────────────────────────────────────────
 ws2 = wb.create_sheet("ENERO 26")
 header(ws2, 1, ["F. PEDIDO", "ORDEN", "PDV", "PIEZA", "MODELO", "METAL",
                 "F. PAGO", "PRECIO", "FORMA PAGO", "DESC STOCK",
-                "F. ENTREGA", "ESTADO", "CLIENTA", "CELU", "VENDEDORA"])
+                "F. ENTREGA", "ESTADO", "CLIENTE", "CELU", "VENDEDOR/A"])
 
 sample_sales = [
-    ("2026-01-05", "#001", "LOCAL",     "ANILLO", "LUNA",       "ALPACA", "2026-01-05", 2500, "GETNET",       "SI", "2026-01-05", "ARCHIVADO", "María García",   "1155550001", "SOL"),
-    ("2026-01-08", "#002", "INSTAGRAM", "ARO",    "SOL",        "BRONCE", "2026-01-08", 2000, "MERCADO PAGO", "SI", "2026-01-09", "ARCHIVADO", "Laura Pérez",    "1155550002", "PAU"),
-    ("2026-01-12", "#003", "ECOMMERCE", "DIJE",   "ESTRELLA",   "ALPACA", "2026-01-12", 1800, "TRANSFERENCIA","SI", "2026-01-14", "ARCHIVADO", "Ana Rodríguez",  "1155550003", "SOL"),
-    ("2026-01-20", "-",    "LOCAL",     "ANILLO", "LUNA",       "BRONCE", "2026-01-20", 2000, "EFECTIVO",     "SI", "2026-01-20", "ARCHIVADO", "Camila López",   "1155550004", "PAU"),
+    ("2026-01-05", "#001", "LOCAL",     "ANILLO", "LUNA",     "ALPACA", "2026-01-05", 2500, "GETNET",       "SI", "2026-01-05", "ARCHIVADO", "Maria Garcia",   "1155550001", "VENDEDOR A"),
+    ("2026-01-08", "#002", "INSTAGRAM", "ARO",    "SOL",      "BRONCE", "2026-01-08", 2000, "MERCADO PAGO", "SI", "2026-01-09", "ARCHIVADO", "Laura Perez",    "1155550002", "VENDEDOR B"),
+    ("2026-01-12", "#003", "ECOMMERCE", "DIJE",   "ESTRELLA", "ALPACA", "2026-01-12", 1800, "TRANSFERENCIA","SI", "2026-01-14", "ARCHIVADO", "Ana Rodriguez",  "1155550003", "VENDEDOR A"),
+    ("2026-01-20", "-",    "LOCAL",     "ANILLO", "LUNA",     "BRONCE", "2026-01-20", 2000, "EFECTIVO",     "SI", "2026-01-20", "ARCHIVADO", "Camila Lopez",   "1155550004", "VENDEDOR B"),
 ]
 
 for i, row_data in enumerate(sample_sales, 2):
@@ -88,29 +88,29 @@ ws2.column_dimensions["M"].width = 16
 ws3 = wb.create_sheet("TAREAS")
 header(ws3, 1, ["#", "TAREA", "DETALLE", "RESPONSABLE", "ESTADO", "PRIORIDAD", "", "RESPUESTA"])
 ws3.cell(2, 1, 1)
-ws3.cell(2, 2, "Actualizar STOCK INICIAL")
-ws3.cell(2, 3, "Hacer conteo físico y ajustar columna E en STOCK")
-ws3.cell(2, 4, "Sol")
+ws3.cell(2, 2, "Update STOCK INICIAL")
+ws3.cell(2, 3, "Do a physical count and adjust column E in STOCK")
+ws3.cell(2, 4, "Staff")
 ws3.cell(2, 5, "PENDIENTE")
 ws3.cell(2, 6, "ALTA")
 
 ws3.cell(3, 1, 2)
-ws3.cell(3, 2, "Agregar mes nuevo")
-ws3.cell(3, 3, "Correr: python arde_tools.py add_month 'FEB 26'")
-ws3.cell(3, 4, "Agustín")
+ws3.cell(3, 2, "Add new month")
+ws3.cell(3, 3, "Run: python inventory_tools.py add_month 'FEB 26'")
+ws3.cell(3, 4, "Operator")
 ws3.cell(3, 5, "LISTO")
 ws3.cell(3, 6, "MEDIA")
-ws3.cell(3, 8, "Hoja creada y lista.")
+ws3.cell(3, 8, "Sheet created and ready.")
 
 # ── ENCARGOS ───────────────────────────────────────────────────────────────────
 ws4 = wb.create_sheet("ENCARGOS")
-header(ws4, 1, ["DESCRIPCION", "CERA", "CLIENTA", "CELU", "PRECIO", "ESTADO"])
-ws4.cell(2, 1, "Anillo talle 18 modelo LUNA ALPACA")
+header(ws4, 1, ["DESCRIPCION", "CERA", "CLIENTE", "CELU", "PRECIO", "ESTADO"])
+ws4.cell(2, 1, "Ring size 18 LUNA ALPACA model")
 ws4.cell(2, 2, "POR HACER")
 ws4.cell(2, 3, "Valentina Sosa")
 ws4.cell(2, 4, "1155550099")
 ws4.cell(2, 5, 3000)
 ws4.cell(2, 6, "PENDIENTE")
 
-wb.save("NUEVO ARDE AGUSTIN.xlsx")
-print("Template creado: NUEVO ARDE AGUSTIN.xlsx")
+wb.save("template.xlsx")
+print("Template created: template.xlsx")
