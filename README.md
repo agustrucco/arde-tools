@@ -1,6 +1,6 @@
 # Retail Inventory Automation
 
-Python CLI tool for managing sales, inventory, and daily operations of an artisanal retail business — built with `openpyxl` over a single shared Excel workbook.
+Python CLI tool for managing sales, inventory, and daily operations of a retail business — built with `openpyxl` over a single shared Excel workbook.
 
 ## Background
 
